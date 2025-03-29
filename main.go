@@ -106,7 +106,7 @@ func main() {
 		Frameless:        true,
 		Windows: &windows.Options{
 			Theme:               windows.SystemDefault,
-			DisableWindowIcon:   true,
+			DisableWindowIcon:   false,
 			WindowIsTranslucent: false,
 		},
 		OnStartup: app.startup,
