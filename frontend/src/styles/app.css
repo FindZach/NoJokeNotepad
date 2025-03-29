@@ -1,14 +1,16 @@
-body {
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 30px 24px 1fr 24px; /* Title bar (30px), menu bar (24px), editor (remaining space), status bar (24px) */
     height: 100vh;
     width: 100vw;
+    overflow: hidden; /* Ensure no scrollbars on the container */
 }
 
 .title-bar {
@@ -118,10 +120,8 @@ body {
 }
 
 .editor {
-    flex: 1;
     border: none;
     outline: none;
-    resize: none;
     padding: 5px;
     font-size: 14px;
     font-family: 'Consolas', 'Courier New', monospace;
@@ -130,9 +130,28 @@ body {
     box-sizing: border-box;
     line-height: 1.5;
     white-space: pre-wrap;
+    cursor: text;
+    resize: none; /* Disable resizing */
+    overflow: auto; /* Allow scrolling within the text area if needed */
 }
 
 .editor.no-wrap {
     white-space: pre;
     overflow-x: auto;
+}
+
+/* Status bar styles */
+.status-bar {
+    background-color: #f0f0f0;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-top: 1px solid #ccc;
+    font-size: 12px;
+    color: #333;
+}
+
+.status-bar span {
+    margin-right: 20px;
 }
