@@ -3,6 +3,7 @@
   import TitleBar from './components/TitleBar.svelte';
   import MenuBar from './components/MenuBar.svelte';
   import Editor from './components/Editor.svelte';
+  import StatusBar from './components/StatusBar.svelte';
 
   let content = '';
   let wailsReady = false;
@@ -144,4 +145,5 @@
           onToggleWordWrap={toggleWordWrap}
   />
   <Editor {content} {wordWrapEnabled} on:change={(e) => (content = e.target.value)} />
+  <StatusBar {content} {currentFile} />
 </div>
