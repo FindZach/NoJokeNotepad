@@ -7,10 +7,10 @@ html, body {
 
 .container {
     display: grid;
-    grid-template-rows: 30px 24px 1fr 24px; /* Title bar (30px), menu bar (24px), editor (remaining space), status bar (24px) */
+    grid-template-rows: 30px 24px 1fr 24px;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* Ensure no scrollbars on the container */
+    overflow: hidden;
 }
 
 .title-bar {
@@ -18,22 +18,35 @@ html, body {
     height: 30px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 10px;
+    justify-content: flex-start; /* Align items to the left */
+    padding: 0 12px;
     --wails-draggable: drag;
 }
 
+.app-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    user-select: none; /* Prevent text selection */
+}
+
 .title {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13px;
+    font-weight: normal;
     color: #000;
     --wails-draggable: no-drag;
     cursor: default;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* Adjust as needed */
 }
 
 .window-controls {
     display: flex;
     --wails-draggable: no-drag;
+    margin-left: auto; /* Push the controls to the right */
 }
 
 .window-control {
@@ -47,6 +60,7 @@ html, body {
     border: none;
     background: none;
     color: #000;
+    user-select: none; /* Prevent text selection */
 }
 
 .window-control:hover {
@@ -131,8 +145,8 @@ html, body {
     line-height: 1.5;
     white-space: pre-wrap;
     cursor: text;
-    resize: none; /* Disable resizing */
-    overflow: auto; /* Allow scrolling within the text area if needed */
+    resize: none;
+    overflow: auto;
 }
 
 .editor.no-wrap {

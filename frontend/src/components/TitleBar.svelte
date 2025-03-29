@@ -1,12 +1,14 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import * as runtime from "../../wailsjs/runtime/runtime.js";
 
     export let wailsReady = false;
+    export let currentFile = '';
+
     let isMaximized = false;
     let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
+
+    // Construct the dynamic title
+    $: title = currentFile ? `${currentFile} - NoJoke Notepad` : 'NoJoke Notepad';
 
     onMount(() => {
         if (wailsReady && window.runtime) {
@@ -35,16 +37,23 @@
         }
     }
 
+    let lastWindowSize = { width: 500, height: 400 };
+
     function toggleMaximizeWindow() {
         if (wailsReady && window.runtime) {
             if (isMaximized) {
                 window.runtime.WindowUnmaximise();
+                window.runtime.WindowSetSize(lastWindowSize.width, lastWindowSize.height);
                 isMaximized = false;
                 console.log('Restore button clicked');
             } else {
-                window.runtime.WindowMaximise();
-                isMaximized = true;
-                console.log('Maximize button clicked');
+                // Store the current size before maximizing
+                window.runtime.WindowGetSize().then(size => {
+                    lastWindowSize = size;
+                    window.runtime.WindowMaximise();
+                    isMaximized = true;
+                    console.log('Maximize button clicked');
+                });
             }
         } else {
             console.error('Wails runtime not ready for maximize/restore');
@@ -69,47 +78,40 @@
     }
 
     function handleMouseDown(event) {
-        if (wailsReady && window.runtime && isMaximized) {
+        if (wailsReady && window.runtime) {
             // Prevent dragging if the click is on a non-draggable area (title or buttons)
-            if (event.target.classList.contains('title') || event.target.classList.contains('window-control')) {
+            if (event.target.classList.contains('title') || event.target.classList.contains('window-control') || event.target.classList.contains('app-icon')) {
                 return;
             }
 
-            // Restore the window
-            window.runtime.WindowUnmaximise();
-            isMaximized = false;
-            console.log('Restoring window via drag');
+            // If the window is maximized, restore it when dragging starts
+            if (isMaximized) {
+                window.runtime.WindowUnmaximise();
+                isMaximized = false;
+                console.log('Restoring window via drag');
+            }
 
-            // Get the current mouse position
-            dragStartX = event.screenX;
-            dragStartY = event.screenY;
+            // Let Wails handle the dragging natively via --wails-draggable: drag
             isDragging = true;
-
-            // Set the initial position of the window to follow the mouse
-            const windowWidth = 500; // Default width from main.go
-            const windowHeight = 400; // Default height from main.go
-            const newX = event.screenX - windowWidth / 2;
-            const newY = event.screenY - 30; // Account for the title bar height
-
-            window.runtime.WindowSetPosition(newX, newY);
         }
     }
 
     function handleMouseMove(event) {
-        if (isDragging && wailsReady && window.runtime) {
-            const newX = event.screenX - dragStartX;
-            const newY = event.screenY - dragStartY;
-            window.runtime.WindowSetPosition(newX, newY);
+        // No need to manually set position; Wails handles dragging
+        if (isDragging) {
+            console.log('Dragging window');
         }
     }
 
     function handleMouseUp() {
         isDragging = false;
+        console.log('Drag ended');
     }
 </script>
 
 <div class="title-bar" on:dblclick={handleTitleBarDoubleClick} on:mousedown={handleMouseDown}>
-    <div class="title">NoJoke Notepad</div>
+    <img src="/images/icon.ico" alt="App Icon" class="app-icon" />
+    <div class="title">{title}</div>
     <div class="window-controls">
         <button class="window-control" on:click={minimizeWindow} disabled={!wailsReady}>−</button>
         <button class="window-control" on:click={toggleMaximizeWindow} disabled={!wailsReady}>{isMaximized ? '🗗' : '🗖'}</button>
